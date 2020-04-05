@@ -1,74 +1,77 @@
-import React from 'react';
-import { Menu } from 'antd';
-import { Link } from 'react-router-dom';
+/*
+*	reac后台管理系统
+*	LeftNav.jsx
+*	@author: mryyg
+*	2020-03-12 20:14:48
+*/
 
-import {
-    HomeOutlined,
-    UserOutlined,
-    AppstoreOutlined,
-    SafetyOutlined,
-    AreaChartOutlined,
-    FormOutlined,
-} from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Menu } from 'antd';
+import { Link, withRouter } from 'react-router-dom';
+
+// 引入路由数据
+import menuList from '../../config/menuConfig';
 
 const { SubMenu } = Menu;
 
-export default function Nav(props) {
+function Nav(props) {
+
+    let path = props.location.pathname;
+    
+    const [openKey,setOpenKey] = useState();
+
+    path.includes('/product') && (path = '/product');
+
+    const createMenu = (menuList) => {
+        // console.log(222)
+        return menuList.map(item => {
+            if (!item.children) {
+                return (
+                    <Menu.Item key={item.path}>
+                        <Link to={item.path}>
+                            {item.icon}
+                            <span>{item.title}</span>
+                        </Link>
+                    </Menu.Item>
+                )
+            } else {
+                // 查找子列表中是否有匹配当前地址的项，有则说明需要展开
+                if (item.children.find(item1 => path.indexOf(item1.path) === 0)) setOpenKey(item.path)
+                return (
+                    <SubMenu
+                        key={item.path}
+                        title={
+                            <span>
+                                {item.icon}
+                                <span>{item.title}</span>
+                            </span>
+                        }
+                    >
+                        {createMenu(item.children)}
+                    </SubMenu>
+                )
+            }
+        })
+    }
+    
+    // 创建左菜单
+    const [menuNodes] = useState(()=>{ 
+        return createMenu(menuList)
+    });
+
     return (
         <Menu
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
             mode="inline"
             theme="dark"
+            selectedKeys={[path]}
+            defaultOpenKeys={[openKey]}
         >
-            <Menu.Item key="1">
-                <Link to="/home">
-                    <HomeOutlined />
-                    <span>首页</span>
-                </Link>
-            </Menu.Item>
-            <SubMenu
-                key="sub1"
-                title={
-                    <span>
-                        <AppstoreOutlined />
-                        <span>商品</span>
-                    </span>
-                }
-            >
-                <Menu.Item key="5">
-                    <Link to="/category">
-                        品类管理
-                    </Link>
-
-                </Menu.Item>
-                <Menu.Item key="6">商品管理</Menu.Item>
-            </SubMenu>
-            <Menu.Item key="2">
-                <UserOutlined />
-                <span>用户管理</span>
-            </Menu.Item>
-            <Menu.Item key="3">
-                <SafetyOutlined />
-                <span>角色管理</span>
-            </Menu.Item>
-            <SubMenu
-                key="sub2"
-                title={
-                    <span>
-                        <AreaChartOutlined />
-                        <span>数据展示</span>
-                    </span>
-                }
-            >
-                <Menu.Item key="5">柱形图</Menu.Item>
-                <Menu.Item key="6">折线图</Menu.Item>
-                <Menu.Item key="7">饼图</Menu.Item>
-            </SubMenu>
-            <Menu.Item key="8">
-                <FormOutlined />
-                订单管理
-            </Menu.Item>
+            {
+                menuNodes
+            }
+           
         </Menu>
     );
 }
+
+export default withRouter(Nav);

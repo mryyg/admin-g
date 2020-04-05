@@ -45,7 +45,7 @@ const Login = props => {
         <div className="login">
             <header className="login_header">
                 <img src={logo} alt="hello" className="logo" />
-                <h3>React后台管理系统</h3>
+                <h3>myAdmin</h3>
             </header>
             <section className="login_content">
                 <h3>用户登录</h3>

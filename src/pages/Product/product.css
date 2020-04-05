@@ -1,0 +1,22 @@
+.product-detail .detail-list-col {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+}
+.product-detail .detail-list-col h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.product-detail .detail-list-col span {
+  padding-top: 2px;
+  margin-left: 20px;
+  text-align: center;
+}
+.product-detail .detail-list-col .product-img img {
+  width: 150px;
+  height: 150px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}

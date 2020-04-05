@@ -19,26 +19,36 @@ import './admin.less';
 // 引入图片
 import logo from "../../assets/images/logo.jpg";
 
-// 引入自定义组件
+// 左菜单
 import Nav from '../../components/left-nav/LeftNav';
+// 头部组件
 import AdminHeader from '../../components/header/Header';
+// 首页
 import Home from '../Home/Home';
+// 品类管理
 import Category from '../Category/Category';
-import User from '../User/User';
-import Role from '../Role/Role';
-import Pie from '../Pie/Pie';
-import Line from '../Line/Line';
-import Bar from '../Bar/Bar';
+// 商品管理
 import Product from '../Product/Product';
+// 用户管理
+import User from '../User/User';
+// 角色管理
+import Role from '../Role/Role';
+// 柱形图
+import Bar from '../Bar/Bar';
+// 折线图
+import Line from '../Line/Line';
+// 饼图
+import Pie from '../Pie/Pie';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 
 export default function Admin(props) {
-    // 从内存中获取用户信息
+    // 从内存中获取用户信息,判断是否登录
     const user = memoryUtils.user;
     if (!user._id) return <Redirect to='/login' />;
+
     return (
-        <Layout style={{ height: '100%' }}>
+        <Layout>
             <Sider
                 breakpoint="lg"
                 collapsedWidth="0"
@@ -46,27 +56,28 @@ export default function Admin(props) {
             >
                 <div className='main-left-logo'>
                     <img src={logo} alt='react' />
-                     react-admin
+                     myAdmin
                 </div>
                 <Nav />
             </Sider>
-            <Layout className='main'>
-                <Header className="site-layout-sub-header-background" style={{ padding: 0 }} >
-                    <AdminHeader />
-                </Header>
-                <Content className='main-content'>
+            <Layout className='mainBox'>
+                
+                <AdminHeader />
+                
+                <Content className='main-content' style={{margin:"20px"}}>
                     <Switch>
                         <Route path='/home' component={Home} />
                         <Route path='/category' component={Category} />
                         <Route path='/user' component={User} />
                         <Route path='/role' component={Role} />
                         <Route path='/product' component={Product} />
-                        <Route path='/pie' component={Pie} />
-                        <Route path='/line' component={Line} />
-                        <Route path='/bar' component={Bar} />
+                        <Route path='/charts/pie' component={Pie} />
+                        <Route path='/charts/line' component={Line} />
+                        <Route path='/charts/bar' component={Bar} />
+                        <Redirect to='/home' />
                     </Switch>
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>建议使用谷歌浏览器体验更佳！</Footer>
+                <Footer style={{ textAlign: 'center' }}>推荐使用谷歌浏览器体验更佳！</Footer>
             </Layout>
         </Layout>
     )
