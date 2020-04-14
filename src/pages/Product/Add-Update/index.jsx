@@ -11,7 +11,13 @@ import {
 
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
-import { reqCategory } from '../../../api';
+// 图片上传组件
+import PicturesWall from './pictures-wall';
+// 富文本编辑器
+import RichTextEditor from './rich-text-editor';
+
+// api
+import { reqCategory, reqAddOrUpdateProduct } from '../../../api';
 
 const { TextArea } = Input;
 
@@ -23,9 +29,14 @@ export default class AddUpdate extends Component {
         }
 
         // 点击更新时传入的商品信息
-        this.product = this.props.location.state;
-        console.log(this.product)
-        this.isUpdate = !!this.product;
+        const product = props.location.state
+        this.product = product || {};
+        this.isUpdate = !!product;
+
+        // 图片上传组件ref
+        this.pwRef = React.createRef();
+        // 富文本组件ref
+        this.richRef = React.createRef();
     }
 
     // 获取分类
@@ -104,7 +115,7 @@ export default class AddUpdate extends Component {
         targetOption.loading = false;
 
         // 合并选项
-        if (subCategorys) {
+        if (subCategorys.length !== 0) {
             targetOption.children = subCategorys.map((option) => (
                 {
                     value: option._id,
@@ -120,6 +131,36 @@ export default class AddUpdate extends Component {
             options: [...this.state.options]
         })
     }
+
+    // 添加、更新
+    onFinish = async values => {
+        console.log('Success:', values);
+        // 将图片数据、富文本数据和表单数据合并
+        const {name,desc,price,categoryIds} = values;
+        // 调用子组件中的方法，得到子组件的数据
+        const imgs = this.pwRef.current.getImgs();
+        const detail = this.richRef.current.getDetail();
+        let pCategoryId, categoryId;
+        if(categoryIds.length === 1) { // 选择的是一级分类
+            pCategoryId = '0';
+            categoryId = categoryIds[0];
+        } else {
+            pCategoryId = categoryIds[0];
+            categoryId = categoryIds[1];
+        }
+        const product = {name,desc,price,pCategoryId,categoryId,imgs,detail};
+
+        // 如果是更新
+        if(this.isUpdate) {
+            product._id = this.product._id;
+        }
+
+        // 发送请求
+        const res = await reqAddOrUpdateProduct(product);
+        if(res.status !== 0) return message.error('保存商品失败');
+        message.success('保存商品成功');
+        this.props.history.goBack();
+    };
 
 
     componentDidMount() {
@@ -139,7 +180,6 @@ export default class AddUpdate extends Component {
                 categoryIds.push(pCategoryId);
                 categoryIds.push(categoryId)
             }
-            console.log(categoryIds)
             formInitialValues = {
                 name,
                 desc,
@@ -147,6 +187,7 @@ export default class AddUpdate extends Component {
                 categoryIds,
             }
         }
+        console.log(this.product)
 
         // 表单布局
         const layout = {
@@ -171,7 +212,11 @@ export default class AddUpdate extends Component {
                 title={title}
                 style={{ height: '100%' }}
             >
-                <Form {...layout} initialValues={formInitialValues}>
+                <Form
+                    {...layout}
+                    initialValues={formInitialValues}
+                    onFinish={this.onFinish}
+                >
                     <Form.Item
                         label="商品名称："
                         name="name"
@@ -232,6 +277,17 @@ export default class AddUpdate extends Component {
                             onChange={this.onChange}
                             placeholder='请指定商品分类'
                         />
+                    </Form.Item>
+                    <Form.Item label="商品图片：">
+                        <PicturesWall ref={this.pwRef} imgs={this.product.imgs} />
+                    </Form.Item>
+                    <Form.Item labelCol={{ span: 2 }} wrapperCol={{ span: 20 }}>
+                        <RichTextEditor ref={this.richRef} detail={this.product.detail} />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            提交
+                        </Button>
                     </Form.Item>
                 </Form>
             </Card>

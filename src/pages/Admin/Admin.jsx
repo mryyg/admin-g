@@ -48,7 +48,7 @@ export default function Admin(props) {
     if (!user._id) return <Redirect to='/login' />;
 
     return (
-        <Layout>
+        <Layout style={{minHeight:'100%'}}>
             <Sider
                 breakpoint="lg"
                 collapsedWidth="0"

@@ -13,11 +13,11 @@ export default function (time) {
     let m = date.getMinutes();
     let s = date.getSeconds();
 
-    M = M > 10 ? M : '0' + M
-    D = D > 10 ? D : '0' + D
-    h = h > 10 ? h : '0' + h
-    m = m > 10 ? m : '0' + m
-    s = s > 10 ? s : '0' + s
+    M = M > 9 ? M : '0' + M
+    D = D > 9 ? D : '0' + D
+    h = h > 9 ? h : '0' + h
+    m = m > 9 ? m : '0' + m
+    s = s > 9 ? s : '0' + s
 
     return `${Y}-${M}-${D} ${h}:${m}:${s}`
 }

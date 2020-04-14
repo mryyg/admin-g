@@ -50,3 +50,27 @@ export const reqUpdateStatus = (productId,status) => request(base + '/manage/pro
 
 // 根据分类id获取分类
 export const reqCategoryName = (categoryId) => request(base + '/manage/category/info', {categoryId}, 'GET');
+
+// 删除图片
+export const reqDeleteImg = name => request(base + '/manage/img/delete', {name}, 'POST');
+
+// 添加/更新商品
+export const reqAddOrUpdateProduct = product => request(base + '/manage/product/' + (product._id ? 'update' : 'add'), {...product}, 'POST')
+
+// 获取角色列表
+export const reqRoles = () => request(base + '/manage/role/list', 'GET');
+
+// 添加角色
+export const reqCreateRole = roleName => request(base + '/manage/role/add', {roleName},'POST');
+
+// 设置权限
+export const reqSetRole = role => request(base + '/manage/role/update', role, 'POST');
+
+// 获取用户列表
+export const reqUsers = () => request(base + '/manage/user/list','GET');
+
+// 添加/更新用户
+export const reqAddOrUpdateUser = user => request(base + '/manage/user/' + (user._id ? 'update' : 'add'), user, 'POST');
+
+// 删除用户
+export const reqDeleteUser = userId =>request(base + '/manage/user/delete', {userId}, "POST");

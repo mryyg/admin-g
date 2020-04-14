@@ -12,7 +12,8 @@ const menuList = [
   {
     title: "首页",
     path: "/home",
-    icon: <HomeOutlined />
+    icon: <HomeOutlined />,
+    isPublic: true
   },
   {
     title: "商品",

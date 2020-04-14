@@ -86,7 +86,7 @@ export default class Detail extends Component {
                 </div>
                 <div className='detail-list-col'>
                     <h3>商品详情:</h3>
-                    <span>{state.detail}</span>
+                    <div dangerouslySetInnerHTML={{__html: state.detail}}></div>
                 </div>
             </Card>
         )
