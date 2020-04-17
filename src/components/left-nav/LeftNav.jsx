@@ -1,5 +1,5 @@
 /*
-*	reac后台管理系统
+*	react后台管理系统
 *	LeftNav.jsx
 *	@author: mryyg
 *	2020-03-12 20:14:48
@@ -23,6 +23,7 @@ function Nav(props) {
     
     const [openKey,setOpenKey] = useState();
 
+    // 解决进入商品详情页面时，商品菜单不选中
     path.includes('/product') && (path = '/product');
 
     const createMenu = (menuList) => {
