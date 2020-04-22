@@ -8,13 +8,21 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
+import { Provider } from 'react-redux';
+
 import App from './App';
+
+import store from './redux/store';
 
 // 用于获取登录信息
 import memoryUtils from './utils/memoryUtils';
 import storageUtil from './utils/storageUtils';
 
-const user = storageUtil.getUser();
-user._id && (memoryUtils.user = user);
+// const user = storageUtil.getUser();
+// user._id && (memoryUtils.user = user);
 
-ReactDom.render(<App />, document.getElementById('root'))
+ReactDom.render(
+    (<Provider store={store}>
+        <App />
+    </Provider>), 
+document.getElementById('root'))

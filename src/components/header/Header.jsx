@@ -7,6 +7,9 @@
 
 import React, { Component } from 'react';
 
+import { connect } from 'react-redux';
+import { logOut } from '../../redux/actions';
+
 import { withRouter } from 'react-router-dom'
 
 import { Button, Modal } from 'antd';
@@ -22,13 +25,13 @@ import { reqWeather } from '../../api/index';
 import dateUtils from '../../utils/dateUtils';
 
 // 路由数据
-import menuList from '../../config/menuConfig';
+// import menuList from '../../config/menuConfig';
 
 // 用于获取登录信息
-import memoryUtils from '../../utils/memoryUtils';
+// import memoryUtils from '../../utils/memoryUtils';
 
 // 用于清除本地登录信息
-import storageUtil from '../../utils/storageUtils'
+// import storageUtil from '../../utils/storageUtils';
 
 class AdminHeader extends Component {
 
@@ -39,8 +42,8 @@ class AdminHeader extends Component {
         weather: '',
         // 时间
         date: dateUtils(),
-        // 标题
-        title: ''
+        // // 标题
+        // title: ''
     }
 
     async getWeather(city) {
@@ -59,25 +62,6 @@ class AdminHeader extends Component {
         }, 1000);
     }
 
-    getTitle(path) {
-        let title;
-        menuList.some(item => {
-            if (item.path === path) {
-                return title = item.title;
-            } else if (item.children) {
-                item.children.some(itemC => {
-                    if (itemC.path === path) {
-                        title = itemC.title;
-                        return true;
-                    }
-                    return false;
-                });
-            }
-            return false;
-        })
-        return title;
-    }
-
     logout = () => {
         // const that = this;
         Modal.confirm({
@@ -86,8 +70,9 @@ class AdminHeader extends Component {
             cancelText: '取消',
             icon: <ExclamationCircleOutlined />,
             onOk: () => {
-                storageUtil.removeUser();
-                memoryUtils.user = {};
+                // storageUtil.removeUser();
+                // memoryUtils.user = {};
+                this.props.logOut();
                 this.props.history.replace('/login');
             }
         })
@@ -100,21 +85,6 @@ class AdminHeader extends Component {
 
         // 获取时间
         this.getTime();
-
-        // 获取标题
-        this.setState({
-            title: this.getTitle(this.props.location.pathname)
-        })
-    }
-
-    componentDidUpdate(preProps) {
-        const prePath = preProps.location.pathname;
-        const curPath = this.props.location.pathname;
-        if (prePath !== curPath) {
-            this.setState({
-                title: this.getTitle(curPath)
-            })
-        }
     }
 
     componentWillUnmount() {
@@ -123,16 +93,16 @@ class AdminHeader extends Component {
     }
 
     render() {
-        const { dayPictureUrl, weather, date, title } = this.state;
+        const { dayPictureUrl, weather, date } = this.state;
         return (
             <div className="header">
                 <div className='header-top'>
-                    Hi, {memoryUtils.user.username}
+                    Hi, {this.props.user.username}
                     <Button type="link" onClick={this.logout}>退出</Button>
                 </div>
                 <div className='header-bottom'>
                     <div className="header-bottom-left">
-                        {title}
+                        {this.props.title}
                     </div>
                     <div className="header-bottom-right">
                         {date}
@@ -144,4 +114,7 @@ class AdminHeader extends Component {
         )
     }
 }
-export default withRouter(AdminHeader);
+export default connect(
+    (state) => ({title: state.title, user: state.user}),
+    {logOut}
+)(withRouter(AdminHeader));

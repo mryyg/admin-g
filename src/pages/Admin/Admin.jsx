@@ -11,7 +11,9 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Layout } from 'antd';
 
 // 用于获取登录信息
-import memoryUtils from '../../utils/memoryUtils';
+// import memoryUtils from '../../utils/memoryUtils';
+
+import { connect } from 'react-redux';
 
 // 引入样式
 import './admin.less';
@@ -42,10 +44,10 @@ import Pie from '../Pie/Pie';
 
 const { Content, Footer, Sider } = Layout;
 
-export default function Admin(props) {
+function Admin(props) {
     // 从内存中获取用户信息,判断是否登录
-    const user = memoryUtils.user;
-    if (!user._id) return <Redirect to='/login' />;
+    const user = props.user;
+    if (!(user && user._id)) return <Redirect to='/login' />;
 
     return (
         <Layout style={{minHeight:'100%'}}>
@@ -82,3 +84,7 @@ export default function Admin(props) {
         </Layout>
     )
 }
+
+export default connect(
+    (state) => ({user: state.user})
+)(Admin);

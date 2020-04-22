@@ -9,11 +9,15 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 
+import { connect } from 'react-redux';
+import {setTitle} from '../../redux/actions';
+
 // 引入路由数据
 import menuList from '../../config/menuConfig';
 
 // 用于获取登录信息
-import memoryUtils from '../../utils/memoryUtils';
+// import memoryUtils from '../../utils/memoryUtils';
+
 
 const { SubMenu } = Menu;
 
@@ -30,9 +34,11 @@ function Nav(props) {
         return menuList.map(item => {
             if(hasAuth(item)) {
                 if (!item.children) {
+                    // 解决刷新后头部标题不对应
+                    if(item.path === path) props.setTitle(item.title);
                     return (
                         <Menu.Item key={item.path}>
-                            <Link to={item.path}>
+                            <Link to={item.path} onClick={()=>{props.setTitle(item.title)}}>
                                 {item.icon}
                                 <span>{item.title}</span>
                             </Link>
@@ -40,7 +46,7 @@ function Nav(props) {
                     )
                 } else {
                     // 查找子列表中是否有匹配当前地址的项，有则说明需要展开
-                    if (item.children.find(item1 => path.indexOf(item1.path) === 0)) setOpenKey(item.path)
+                    if (item.children.find(item1 => path.indexOf(item1.path) === 0)) {setOpenKey(item.path)}
                     return (
                         <SubMenu
                             key={item.path}
@@ -68,8 +74,7 @@ function Nav(props) {
             3. 用户有此菜单权限（菜单的path在用户的menus中）
             4. 子菜单在权限内，父级菜单也需要显示
          */
-        const user = memoryUtils.user;
-        console.log(user)
+        const user = props.user;
 
          if(item.isPUblic || user.username === 'admin' || user.role.menus.indexOf(item.path) !== -1) {
             return true
@@ -98,4 +103,7 @@ function Nav(props) {
     );
 }
 
-export default withRouter(Nav);
+export default connect(
+    (state)=>({title: state.title, user: state.user}),
+    {setTitle}
+)(withRouter(Nav));

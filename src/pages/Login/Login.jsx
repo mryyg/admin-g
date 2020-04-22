@@ -8,6 +8,9 @@
 import React from "react";
 import { Redirect } from 'react-router-dom';
 
+import { connect } from 'react-redux';
+import { logIn } from '../../redux/actions';
+
 // 引入antd组件
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
@@ -28,17 +31,18 @@ import storageUtil from '../../utils/storageUtils';
 const Login = props => {
 
     // 自动登录
-    if (memoryUtils.user && memoryUtils.user._id) return <Redirect to='/' />;
+    if (props.user && props.user._id) return <Redirect to='/' />;
 
     // 登录
     const onFinish = async ({ username, password }) => {
-        let res = await reqLogin(username, password);
-        if (res.status === 1) return message.error(res.msg);
-        const user = res.data;
-        // 保存登录信息
-        memoryUtils.user = user;
-        storageUtil.saveUser(user);
-        props.history.replace("/");
+        // let res = await reqLogin(username, password);
+        // if (res.status === 1) return message.error(res.msg);
+        // const user = res.data;
+        // // 保存登录信息
+        // memoryUtils.user = user;
+        // storageUtil.saveUser(user);
+        // props.history.replace("/");
+        props.logIn(username,password);
     };
 
     return (
@@ -117,4 +121,7 @@ const Login = props => {
     );
 };
 
-export default Login;
+export default connect(
+    (state) => ({user: state.user}),
+    {logIn}
+)(Login);
